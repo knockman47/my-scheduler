@@ -1,9 +1,10 @@
-name: Build macOS Executable
+name: Build macOS Scheduler
 
 on:
   push:
     branches: [ main ]
   pull_request:
+    branches: [ main ]
 
 jobs:
   build-macos:
@@ -11,6 +12,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Debug workspace
+        run: |
+          echo "Workspace contents:"
+          ls -R .
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -30,16 +36,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyinstaller
 
-      - name: Build with PyInstaller (one-dir)
+      - name: Build with PyInstaller
         run: |
-          pyinstaller \
-            --onedir \                                # one-folder build :contentReference[oaicite:5]{index=5}
-            --name scheduler \                       # name of app folder
-            --add-data "preferences.txt:." \         # copy preferences.txt into dist/scheduler/ :contentReference[oaicite:6]{index=6}
+          pyinstaller --onedir \
+            --name scheduler \
+            --add-data 'preferences.txt:.' \
             scheduler.py
 
-      - name: Upload macOS folder
+      - name: Upload build folder
         uses: actions/upload-artifact@v4
         with:
           name: macOS-scheduler
-          path: dist/scheduler               # folder containing exec + prefs :contentReference[oaicite:7]{index=7}
+          path: dist/scheduler
