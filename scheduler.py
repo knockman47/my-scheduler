@@ -3,7 +3,17 @@ import pandas as pd
 
 
 # ─── CONFIG ───────────────────────────────────────────────────────────────────
-PREF_FILE = os.path.join(os.path.dirname(__file__), "preferences.txt")
+# Determine the bundle base directory (_MEIPASS) or script location
+bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+
+# Prefer user’s working directory copy, if it exists
+cwd_pref = os.path.join(os.getcwd(), 'preferences.txt')
+if os.path.exists(cwd_pref):
+    PREF_FILE = cwd_pref
+else:
+    PREF_FILE = os.path.join(bundle_dir, 'preferences.txt')
+
+print(f"Loading preferences from: {PREF_FILE}")
 OUTFILE   = "new_schedules.xlsx"
 
 DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
